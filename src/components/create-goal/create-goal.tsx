@@ -14,6 +14,25 @@ import {
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Controller, useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { createGoal } from "@/http/create-goal";
+import toast from "react-hot-toast";
+import { useQueryClient } from "@tanstack/react-query";
+
+const createGoalFormSchema = z.object({
+  title: z.string().min(1, "Informe a atividade que deseja adicionar"),
+  desiredWeeklyFrequency: z.coerce
+    .number({
+      message: "Selecione a frequência desejada",
+    })
+    .int()
+    .min(1, "Informe a frequência desejada")
+    .max(7, "Máximo 07"),
+});
+
+type CreateGoalFormValues = z.infer<typeof createGoalFormSchema>;
 
 export function CreateGoal() {
   const desiredWeeklyFrequencies = [
@@ -54,6 +73,32 @@ export function CreateGoal() {
     },
   ];
 
+  const queryClient = useQueryClient();
+
+  const { register, control, reset, handleSubmit, formState } =
+    useForm<CreateGoalFormValues>({
+      resolver: zodResolver(createGoalFormSchema),
+    });
+
+  const handleSubmitForm = async (values: CreateGoalFormValues) => {
+    await createGoal(values);
+
+    const invalidateQueries = [
+      queryClient.invalidateQueries({
+        queryKey: ["summary"],
+      }),
+      queryClient.invalidateQueries({
+        queryKey: ["pending-goals"],
+      }),
+    ];
+
+    await Promise.all(invalidateQueries);
+
+    reset();
+
+    toast.success("Meta cadastrada com sucesso!");
+  };
+
   return (
     <DialogContent>
       <div className="flex flex-col gap-6 h-full">
@@ -72,7 +117,10 @@ export function CreateGoal() {
           </DialogDescription>
         </div>
 
-        <form action="" className="flex-1 flex flex-col justify-between">
+        <form
+          className="flex-1 flex flex-col justify-between"
+          onSubmit={handleSubmit(handleSubmitForm)}
+        >
           <div className="flex flex-col gap-6">
             <div className="flex flex-col gap-2">
               <Label htmlFor="title">Qual a atividade?</Label>
@@ -80,23 +128,47 @@ export function CreateGoal() {
                 id="title"
                 autoFocus
                 placeholder="Praticar exercícios, meditar, etc..."
+                {...register("title")}
               />
+              {formState.errors.title && (
+                <span className="text-red-400 text-sm">
+                  {formState.errors.title.message}
+                </span>
+              )}
             </div>
             <div className="flex flex-col gap-2">
               <Label>Quantas vezes na semana?</Label>
-              <RadioGroup>
-                {desiredWeeklyFrequencies.map((frequency) => (
-                  <RadioGroupItem key={frequency.value} value={frequency.value}>
-                    <RadioGroupIndicator />
-                    <span className="text-zinc-300 text-sm font-medium leading-none">
-                      {frequency.label}
-                    </span>
-                    <span className="text-lg leading-none">
-                      {frequency.emoji}
-                    </span>
-                  </RadioGroupItem>
-                ))}
-              </RadioGroup>
+              <Controller
+                control={control}
+                defaultValue={1}
+                name="desiredWeeklyFrequency"
+                render={({ field }) => (
+                  <RadioGroup
+                    onValueChange={field.onChange}
+                    value={String(field.value)}
+                  >
+                    {desiredWeeklyFrequencies.map((frequency) => (
+                      <RadioGroupItem
+                        key={frequency.value}
+                        value={frequency.value}
+                      >
+                        <RadioGroupIndicator />
+                        <span className="text-zinc-300 text-sm font-medium leading-none">
+                          {frequency.label}
+                        </span>
+                        <span className="text-lg leading-none">
+                          {frequency.emoji}
+                        </span>
+                      </RadioGroupItem>
+                    ))}
+                  </RadioGroup>
+                )}
+              />
+              {formState.errors.desiredWeeklyFrequency && (
+                <span className="text-red-400 text-sm">
+                  {formState.errors.desiredWeeklyFrequency.message}
+                </span>
+              )}
             </div>
           </div>
 
