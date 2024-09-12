@@ -73,9 +73,16 @@ export function Summary({ data }: SummaryProps) {
       <div className="flex flex-col gap-6">
         <h2 className="text-xl font-medium">Sua semana</h2>
 
-        {Object.entries(data.goalsPerDay).map(([date, goals]) => (
-          <GoalTracker key={date} date={date} goals={goals} />
-        ))}
+        {!data.goalsPerDay && (
+          <p className="text-zinc-400 font-normal text-sm">
+            Você ainda não completou nenhuma meta essa semana.
+          </p>
+        )}
+
+        {data.goalsPerDay &&
+          Object.entries(data.goalsPerDay).map(([date, goals]) => (
+            <GoalTracker key={date} date={date} goals={goals} />
+          ))}
       </div>
     </div>
   );
