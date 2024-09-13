@@ -21,6 +21,10 @@ The application was developed in React, using TypeScript, TailwindCSS and other 
     </div>
 </div>
 
+## Video
+
+https://github.com/user-attachments/assets/550076c0-32d2-4ac8-9d3e-daff8e380ea9
+
 ## Stack
 
 <img width="30px" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg"/> <img width="30px" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg"/> <img width="30px" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/tailwindcss/tailwindcss-original.svg"/>
