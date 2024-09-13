@@ -1,4 +1,3 @@
-import toast from "react-hot-toast";
 import { Plus } from "lucide-react";
 import { useTransition } from "react";
 import colors from "tailwindcss/colors";
@@ -32,8 +31,6 @@ export function PendingGoals() {
     ];
 
     await Promise.all(invalidateQueries);
-
-    toast.success("Meta concluída com sucesso!");
   }
 
   if (isFetching && !data) {

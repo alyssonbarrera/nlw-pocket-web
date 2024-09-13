@@ -1,4 +1,10 @@
-import { X } from "lucide-react";
+import { z } from "zod";
+import { toast } from "react-hot-toast";
+import colors from "tailwindcss/colors";
+import { LoaderCircle, X } from "lucide-react";
+import { Controller, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
 
 import {
   DialogClose,
@@ -14,12 +20,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Controller, useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { createGoal } from "@/http/create-goal";
-import toast from "react-hot-toast";
-import { useQueryClient } from "@tanstack/react-query";
 
 const createGoalFormSchema = z.object({
   title: z.string().min(1, "Informe a atividade que deseja adicionar"),
@@ -174,11 +175,28 @@ export function CreateGoal() {
 
           <footer className="flex items-center gap-3">
             <DialogClose asChild>
-              <Button type="button" variant="secondary" className="flex-1">
+              <Button
+                type="button"
+                variant="secondary"
+                className="flex-1"
+                disabled={formState.isSubmitting}
+              >
                 Fechar
               </Button>
             </DialogClose>
-            <Button type="submit" variant="primary" className="flex-1">
+            <Button
+              type="submit"
+              variant="primary"
+              className="flex-1"
+              disabled={formState.isSubmitting}
+            >
+              {formState.isSubmitting && (
+                <LoaderCircle
+                  size={16}
+                  color={colors["white"]}
+                  className="animate-spin"
+                />
+              )}
               Salvar
             </Button>
           </footer>

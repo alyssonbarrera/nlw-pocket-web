@@ -12,7 +12,7 @@ type GoalTrackerProps = {
 };
 
 export function GoalTracker({ date, goals }: GoalTrackerProps) {
-  const weekDay = dayjs(date)
+  const weekDay = dayjs(new Date(date))
     .format("dddd")
     .replace(/./, (caracter) => caracter.toUpperCase());
 
