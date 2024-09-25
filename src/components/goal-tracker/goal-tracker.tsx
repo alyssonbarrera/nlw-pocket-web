@@ -11,8 +11,10 @@ type GoalTrackerProps = {
   goals: SummaryGoalDTO[];
 };
 
-export function GoalTracker({ date, goals }: GoalTrackerProps) {
-  const weekDay = dayjs(new Date(date))
+export function GoalTracker({ date: goalsDate, goals }: GoalTrackerProps) {
+  const date = dayjs(new Date(goalsDate));
+
+  const weekDay = dayjs(date)
     .format("dddd")
     .replace(/./, (caracter) => caracter.toUpperCase());
 
